@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.db
+.env
+.venv/
+node_modules/
+frontend/dist/
+uploads/
+models/*.joblib
+datasets/raw/
+datasets/processed/
+reports/
