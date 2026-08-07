@@ -15,7 +15,7 @@ def _token():
 
 def test_predict_and_ats():
     token = _token()
-    headers = {'Authorization': f'JWT {token}'}
+    headers = {'Authorization': 'Bearer ' + token}
 
     pred = client.post('/predict', json={'text': 'python fastapi sql docker machine learning'}, headers=headers)
     assert pred.status_code == 200

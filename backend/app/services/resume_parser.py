@@ -17,14 +17,12 @@ SKILL_SET = {
 
 def _extract_text_from_pdf(raw: bytes) -> str:
     reader = PdfReader(io.BytesIO(raw))
-    return "
-".join(page.extract_text() or "" for page in reader.pages)
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
 
 
 def _extract_text_from_docx(raw: bytes) -> str:
     doc = docx.Document(io.BytesIO(raw))
-    return "
-".join(p.text for p in doc.paragraphs)
+    return "\n".join(p.text for p in doc.paragraphs)
 
 
 def extract_text(upload: UploadFile, raw: bytes) -> str:
