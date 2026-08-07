@@ -166,6 +166,31 @@ Run backend/unit tests:
 pytest -q
 ```
 
+Run frontend build check:
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+### CI Check Troubleshooting
+
+If backend tests fail with:
+`ValueError: password cannot be longer than 72 bytes...`
+
+Use these steps:
+1. Confirm `backend/requirements.txt` includes `bcrypt==4.0.1`.
+2. Reinstall backend auth dependencies:
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt --force-reinstall
+   ```
+3. Re-run checks locally:
+   ```bash
+   pytest -q
+   cd frontend && npm run build
+   ```
+
 Current test coverage includes:
 - Auth flow
 - Protected prediction/ATS APIs
