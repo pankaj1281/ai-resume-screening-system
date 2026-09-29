@@ -129,24 +129,79 @@ docker compose up --build
 
 ## Dataset and Training Pipeline
 
-### Dataset
-- Supported: Kaggle/custom CSV
-- Place source file at: `datasets/raw/resume_dataset.csv`
-- Expected columns: `resume_text`, `category`
+### Where to get dataset
 
-### Training Scripts
-```bash
-python training/download_dataset.py
-python training/preprocess.py
-python training/train.py
-python training/evaluate.py
-python training/export_model.py
-```
+Use a resume classification dataset (resume text + job category label). Good starting sources:
+- Kaggle: search `resume screening dataset` or `resume dataset category`
+- Public CSVs that contain resume text and a target class/category column
+- Your own labeled dataset (best option for your company/domain)
 
-### Artifacts Saved
+Recommended minimum dataset quality:
+- At least 500-1000 rows (more is better)
+- At least 5 categories with balanced samples
+- English text if you are using current preprocessing defaults
+- No duplicate rows and no empty resumes
+
+### Required file format
+
+Place the CSV at:
+`datasets/raw/resume_dataset.csv`
+
+Preferred column names:
+- `resume_text`
+- `category`
+
+Notes:
+- `training/preprocess.py` auto-detects columns; if names are different it uses first column as resume text and second as label.
+- Keep only one resume per row and one category label per row.
+
+### Step-by-step training (efficient workflow)
+
+1. Install dependencies:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   ```
+2. Create dataset folder (optional helper):
+   ```bash
+   python training/download_dataset.py
+   ```
+3. Put your CSV at `datasets/raw/resume_dataset.csv`.
+4. Preprocess data:
+   ```bash
+   python training/preprocess.py
+   ```
+5. Train and select best model:
+   ```bash
+   python training/train.py
+   ```
+6. Evaluate metrics and confusion matrix:
+   ```bash
+   python training/evaluate.py
+   ```
+7. Export artifacts to backend:
+   ```bash
+   python training/export_model.py
+   ```
+
+### Artifacts saved
+- `datasets/processed/resume_dataset_processed.csv`
 - `models/model.joblib`
 - `models/vectorizer.joblib`
 - `models/label_encoder.joblib`
+- `reports/confusion_matrix.png`
+
+### Quick troubleshooting
+
+- **`FileNotFoundError: datasets/raw/resume_dataset.csv not found`**  
+  Make sure the CSV file exists at exactly that path.
+- **Poor accuracy / unstable metrics**  
+  Increase dataset size, rebalance classes, and clean noisy labels.
+- **Training is slow**  
+  Start with fewer rows to validate pipeline, then run full training.
+- **NLTK resource download errors**  
+  Ensure internet is available once; preprocessing auto-downloads required NLTK resources.
 
 ## Evaluation Metrics
 
