@@ -5,6 +5,9 @@ import joblib
 from ..config import settings
 from .nlp import preprocess_text
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
+BACKEND_ROOT = Path(__file__).resolve().parents[2]
+
 DEFAULT_CATEGORIES = [
     "Data Scientist", "Machine Learning Engineer", "Software Engineer", "Frontend Developer",
     "Backend Developer", "Full Stack Developer", "Android Developer", "Cyber Security",
@@ -21,14 +24,24 @@ class Predictor:
         self._load()
 
     def _load(self):
-        model_dir = Path(settings.model_dir)
-        model_path = model_dir / "model.joblib"
-        vec_path = model_dir / "vectorizer.joblib"
-        enc_path = model_dir / "label_encoder.joblib"
-        if model_path.exists() and vec_path.exists() and enc_path.exists():
-            self.model = joblib.load(model_path)
-            self.vectorizer = joblib.load(vec_path)
-            self.label_encoder = joblib.load(enc_path)
+        candidate_dirs = [Path(settings.model_dir), REPO_ROOT / "models", BACKEND_ROOT / "models"]
+        seen = set()
+
+        for model_dir in candidate_dirs:
+            key = str(model_dir.resolve())
+            if key in seen:
+                continue
+            seen.add(key)
+
+            model_path = model_dir / "model.joblib"
+            vec_path = model_dir / "vectorizer.joblib"
+            enc_path = model_dir / "label_encoder.joblib"
+
+            if model_path.exists() and vec_path.exists() and enc_path.exists():
+                self.model = joblib.load(model_path)
+                self.vectorizer = joblib.load(vec_path)
+                self.label_encoder = joblib.load(enc_path)
+                return
 
     def predict(self, text: str):
         if self.model is None:
