@@ -192,6 +192,16 @@ Notes:
 - `models/label_encoder.joblib`
 - `reports/confusion_matrix.png`
 
+Backend model loading behavior:
+- `/predict` loads artifacts from `models/` first.
+- If not found there, it automatically falls back to `backend/models/` (output of `training/export_model.py`).
+
+Quick model functionality check:
+```bash
+python training/predict.py --text "python fastapi sql docker machine learning"
+```
+If model artifacts are present, this returns a predicted category label.
+
 ### Quick troubleshooting
 
 - **`FileNotFoundError: datasets/raw/resume_dataset.csv not found`**  
